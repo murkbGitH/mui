@@ -44,7 +44,7 @@ class Select extends React.Component {
   }
 
   state = {
-    showMenu: false
+   showMenu: false
   };
 
   static defaultProps = {
@@ -139,7 +139,10 @@ class Select extends React.Component {
     this.setState({ showMenu: true });
   }
 
-  hideMenu() {
+  hideMenu(ev) {
+    // check default prevented
+    if (ev && ev.defaultPrevented) return;
+
     // remove event listeners
     jqLite.off(window, 'resize', this.hideMenuCB);
     jqLite.off(document, 'click', this.hideMenuCB);
@@ -229,11 +232,22 @@ class Menu extends React.Component {
     this.onKeyPressCB = util.callback(this, 'onKeyPress');
     this.q = '';
     this.qTimeout = null;
+    this.availOptionEls = [];
+
+    // extract selectable options
+    let optionEls = props.optionEls,
+        el,
+        i;
+    
+    for (i=0; i < optionEls.length; i++) {
+      el = optionEls[i];
+      if (!el.disabled && !el.hidden) this.availOptionEls.push(el);
+    }
   }
 
   state = {
     origIndex: null,
-    currentIndex: null
+    currentIndex: 0
   };
 
   static defaultProps = {
@@ -244,14 +258,17 @@ class Menu extends React.Component {
   };
 
   componentWillMount() {
-    let optionEls = this.props.optionEls,
-      m = optionEls.length,
-      selectedPos = 0,
-      i;
+    let optionEls = this.availOptionEls,
+        m = optionEls.length,
+        selectedPos = null,
+        i;
 
     // get current selected position
     for (i = m - 1; i > -1; i--) if (optionEls[i].selected) selectedPos = i;
-    this.setState({ origIndex: selectedPos, currentIndex: selectedPos });
+
+    if (selectedPos !== null) {
+      this.setState({ origIndex: selectedPos, currentIndex: selectedPos });
+    }
   }
 
   componentDidMount() {
@@ -286,8 +303,9 @@ class Menu extends React.Component {
 
   onClick(pos, ev) {
     // don't allow events to bubble
-    ev.stopPropagation();
-    this.selectAndDestroy(pos);
+    //ev.stopPropagation();
+    ev.preventDefault();
+    if (pos !== null) this.selectAndDestroy(pos);
   }
 
   onKeyDown(ev) {
@@ -316,7 +334,7 @@ class Menu extends React.Component {
 
     // select first match alphabetically
     let prefixRegex = new RegExp('^' + this.q, 'i'),
-        optionEls = this.props.optionEls,
+        optionEls = this.availOptionEls,
         m = optionEls.length,
         i;
 
@@ -330,7 +348,7 @@ class Menu extends React.Component {
   }
 
   increment() {
-    if (this.state.currentIndex === this.props.optionEls.length - 1) return;
+    if (this.state.currentIndex === this.availOptionEls.length - 1) return;
     this.setState({ currentIndex: this.state.currentIndex + 1 });
   }
 
@@ -344,7 +362,7 @@ class Menu extends React.Component {
 
     // handle onChange
     if (pos !== this.state.origIndex) {
-      this.props.onChange(this.props.optionEls[pos].value);
+      this.props.onChange(this.availOptionEls[pos].value);
     }
 
     // close menu
@@ -375,31 +393,53 @@ class Menu extends React.Component {
 
   render() {
     let menuItems = [],
-      optionEls = this.props.optionEls,
-      m = optionEls.length,
-      optionEl,
-      cls,
-      i;
+        optionEls = this.props.optionEls,
+        m = optionEls.length,
+        pos = 0,
+        optionEl,
+        cls,
+        val,
+        i;
 
     // define menu items
     for (i = 0; i < m; i++) {
-      cls = (i === this.state.currentIndex) ? 'mui--is-selected ' : '';
+      optionEl = optionEls[i];
 
+      // handle hidden
+      if (optionEl.hidden) continue;
+      
+      // handle disabled
+      if (optionEl.disabled) {
+        cls = 'mui--is-disabled ';
+        val = null;
+      } else {
+        cls = (pos === this.state.currentIndex) ? 'mui--is-selected ' : '';
+        val = pos;
+        pos += 1;
+      }
+      
       // add custom css class from <Option> component
-      cls += optionEls[i].className;
+      cls += optionEl.className;
 
       menuItems.push(
         <div
           key={i}
           className={cls}
-          onClick={this.onClick.bind(this, i)}
+          onClick={this.onClick.bind(this, val)}
         >
-          {optionEls[i].textContent}
+          {optionEl.textContent}
         </div>
       );
     }
 
-    return <div ref={el => { this.wrapperElRef = el }} className="mui-select__menu">{menuItems}</div>;
+    return (
+      <div
+        ref={el => { this.wrapperElRef = el }}
+        className="mui-select__menu"
+      >
+        {menuItems}
+      </div>
+    );
   }
 }
 

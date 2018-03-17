@@ -22,7 +22,8 @@ angular.module(moduleName, [])
         label: '@',
         name: '@',
         ngDisabled: '=',
-        ngModel: '='
+        ngModel: '=',
+        ngRequired: '='
       },
       replace: true,
       transclude: true,
@@ -37,6 +38,7 @@ angular.module(moduleName, [])
         'ng-disabled="ngDisabled" ' +
         'ng-model="ngModel" ' +
         'ng-mousedown="onInnerMousedown($event)" ' +
+        'ng-required="ngRequired" ' +
         '>' +
         '<option ng-repeat="option in options" value="{{option.value}}">{{option.label}}</option>' +
         '</select>' +

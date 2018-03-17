@@ -20,6 +20,7 @@
         $scope.valC = 'opt3';
         $scope.valD = 'opt2';
         $scope.valE = 'opt2';
+        $scope.valF = '';
       });
     </script>
   </head>
@@ -90,6 +91,14 @@
             <mui-option label="6" value="opt6"></mui-option>
           </mui-select>
 
+          <strong>Placeholder hack</strong>
+          <style>select:invalid{color:#ccc;}</style>
+          <mui-select name="exampleF" ng-model="valF" ng-required="true">
+            <mui-option label="Placeholder" value="" selected disabled></mui-option>
+            <mui-option label="Option 1" value="option1"></mui-option>
+            <mui-option label="Option 2" value="option2"></mui-option>
+          </mui-select>
+          
           <mui-button variant="raised">submit</mui-button>
         </form>
       </mui-panel>
