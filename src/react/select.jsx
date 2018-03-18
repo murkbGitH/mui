@@ -50,6 +50,7 @@ class Select extends React.Component {
   static defaultProps = {
     className: '',
     name: '',
+    placeholder: null,
     readOnly: false,
     useDefault: (typeof document !== 'undefined' && 'ontouchstart' in document.documentElement) ? true : false,
     onChange: null,
@@ -163,7 +164,10 @@ class Select extends React.Component {
   }
 
   render() {
-    let menuElem;
+    let value = this.state.value,
+        menuElem,
+        placeholderElem,
+        selectCls;
 
     if (this.state.showMenu) {
       menuElem = (
@@ -186,8 +190,21 @@ class Select extends React.Component {
     }
 
     const { children, className, style, label, defaultValue, readOnly,
-      disabled, useDefault, name, ...reactProps } = this.props;
+      disabled, useDefault, name, placeholder, ...reactProps } = this.props;
 
+    // handle placeholder
+    if (placeholder) {
+      placeholderElem = (
+        <option className="mui--text-placeholder" value="">
+          {placeholder}
+        </option>
+      );
+
+      if (value === undefined || value === '') {
+        selectCls = 'mui--text-placeholder';
+      }
+    }
+    
     return (
       <div
         { ...reactProps }
@@ -200,6 +217,7 @@ class Select extends React.Component {
       >
         <select
           ref={el => { this.controlEl = el; }}
+          className={selectCls}
           name={name}
           disabled={disabled}
           tabIndex={tabIndexInner}
@@ -210,6 +228,7 @@ class Select extends React.Component {
           onMouseDown={this.onInnerMouseDownCB}
           required={this.props.required}
         >
+          {placeholderElem}
           {children}
         </select>
         <label tabIndex="-1">{label}</label>
