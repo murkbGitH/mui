@@ -262,30 +262,13 @@
 
       // Example 8
       class Example8 extends React.Component {
-        state = {
-          numOptions: 3
-        }
-        
-        onClick() {
-          this.setState({numOptions: this.state.numOptions + 1});
-        }
-
         render() {
-          let optionEls = [];
-          
-          for (let i=0; i < this.state.numOptions; i++) {
-            optionEls.push(
-              <Option label={"Option " + i} value={i} />
-            )
-          }
-          
           return (
-            <div>
-              <Select label="Label" placeholder="Placeholder">
-                {optionEls}
-              </Select>
-              <a onClick={this.onClick.bind(this)}>Add option</a>
-            </div>
+            <Select label="Label" placeholder="Placeholder">
+              <Option label="Option 1" value="option1" />
+              <Option label="Option 2" value="option2" />
+              <Option label="Option 3" value="option3" />
+            </Select>
           );
         }
       }
