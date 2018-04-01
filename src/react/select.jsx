@@ -74,10 +74,8 @@ class Select extends React.Component {
   }
 
   onInnerChange(ev) {
-    let value = ev.target.value;
-
     // update state
-    this.setState({ value });
+    this.setState({value: ev.target.value});
   }
 
   onInnerMouseDown(ev) {
@@ -155,16 +153,17 @@ class Select extends React.Component {
     this.wrapperElRef.focus();
   }
 
-  onMenuChange(value) {
+  onMenuChange(index) {
     if (this.props.readOnly) return;
 
     // update inner <select> and dispatch 'change' event
-    this.controlEl.value = value;
+    this.controlEl.selectedIndex = index;
     util.dispatchEvent(this.controlEl, 'change');
   }
 
   render() {
     let value = this.state.value,
+        valueArgs = {},
         menuElem,
         placeholderElem,
         selectCls;
@@ -192,6 +191,10 @@ class Select extends React.Component {
     const { children, className, style, label, defaultValue, readOnly,
       disabled, useDefault, name, placeholder, ...reactProps } = this.props;
 
+    // build value arguments
+    if (this.props.value !== undefined) valueArgs.value = value;  // controlled
+    if (defaultValue !== undefined) valueArgs.defaultValue = defaultValue;
+    
     // handle placeholder
     if (placeholder) {
       placeholderElem = (
@@ -200,7 +203,8 @@ class Select extends React.Component {
         </option>
       );
 
-      if (value === undefined || value === '') {
+      // apply class if value is empty
+      if (value === '' || (value === undefined && !defaultValue)) {
         selectCls = 'mui--text-placeholder';
       }
     }
@@ -216,13 +220,12 @@ class Select extends React.Component {
         onKeyDown={this.onOuterKeyDownCB}
       >
         <select
+          { ...valueArgs }
           ref={el => { this.controlEl = el; }}
           className={selectCls}
           name={name}
           disabled={disabled}
           tabIndex={tabIndexInner}
-          value={this.state.value}
-          defaultValue={defaultValue}
           readOnly={readOnly}
           onChange={this.onInnerChangeCB}
           onMouseDown={this.onInnerMouseDownCB}
@@ -381,7 +384,7 @@ class Menu extends React.Component {
 
     // handle onChange
     if (pos !== this.state.origIndex) {
-      this.props.onChange(this.availOptionEls[pos].value);
+      this.props.onChange(this.availOptionEls[pos].index);
     }
 
     // close menu

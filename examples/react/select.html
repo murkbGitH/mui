@@ -42,12 +42,14 @@
           <strong>Should be disabled</strong>
           <div id="example6"></div>
           
-          <strong>Placeholder hack</strong>
-          <style>select:invalid{color:#ddd;}</style>
+          <strong>Placeholder</strong>
           <div id="example7"></div>
 
           <strong>Placeholder</strong>
           <div id="example8"></div>
+
+          <strong>Multiple options with same value</strong>
+          <div id="example9"></div>
 
           <button class="mui-btn mui-btn--raised">submit</button>
         </form>
@@ -274,6 +276,21 @@
       }
 
 
+      // Example 9
+      class Example9 extends React.Component {
+        render() {
+          return (
+            <Select label="Label">
+              <Option label="Apple" value="fruit" />
+              <Option label="Banana" value="fruit" />
+              <Option label="Ford" value="car" />
+              <Option label="Toyota" value="car" />
+            </Select>
+          );
+        }
+      }
+
+
       // Render examples
       ReactDOM.render(<Example1 />, document.getElementById('example1'));
       ReactDOM.render(<Example2 />, document.getElementById('example2'));
@@ -283,6 +300,7 @@
       ReactDOM.render(<Example6 />, document.getElementById('example6'));
       ReactDOM.render(<Example7 />, document.getElementById('example7'));
       ReactDOM.render(<Example8 />, document.getElementById('example8'));
+      ReactDOM.render(<Example9 />, document.getElementById('example9'));
     </script>
   </body>
 </html>
