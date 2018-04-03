@@ -565,5 +565,12 @@ describe('react/select', function () {
         <Option label="Toyota" value="car" />
       </Select>
     );
+
+    let selectEl = instance.controlEl;
+    
+    selectEl.selectedIndex = 3;
+    ReactUtils.Simulate.change(selectEl);
+    assert.equal(selectEl.value, 'car');
+    assert.equal(selectEl.selectedIndex, 3);
   });
 });

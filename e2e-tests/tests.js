@@ -27146,10 +27146,8 @@ var Select = function (_React$Component) {
   }, {
     key: 'onInnerChange',
     value: function onInnerChange(ev) {
-      var value = ev.target.value;
-
       // update state
-      this.setState({ value: value });
+      this.setState({ value: ev.target.value });
     }
   }, {
     key: 'onInnerMouseDown',
@@ -27233,11 +27231,11 @@ var Select = function (_React$Component) {
     }
   }, {
     key: 'onMenuChange',
-    value: function onMenuChange(value) {
+    value: function onMenuChange(index) {
       if (this.props.readOnly) return;
 
       // update inner <select> and dispatch 'change' event
-      this.controlEl.value = value;
+      this.controlEl.selectedIndex = index;
       util.dispatchEvent(this.controlEl, 'change');
     }
   }, {
@@ -27246,6 +27244,7 @@ var Select = function (_React$Component) {
       var _this2 = this;
 
       var value = this.state.value,
+          valueArgs = {},
           menuElem = void 0,
           placeholderElem = void 0,
           selectCls = void 0;
@@ -27281,8 +27280,12 @@ var Select = function (_React$Component) {
           placeholder = _props.placeholder,
           reactProps = babelHelpers.objectWithoutProperties(_props, ['children', 'className', 'style', 'label', 'defaultValue', 'readOnly', 'disabled', 'useDefault', 'name', 'placeholder']);
 
-      // handle placeholder
+      // build value arguments
 
+      if (this.props.value !== undefined) valueArgs.value = value; // controlled
+      if (defaultValue !== undefined) valueArgs.defaultValue = defaultValue;
+
+      // handle placeholder
       if (placeholder) {
         placeholderElem = _react2.default.createElement(
           'option',
@@ -27290,7 +27293,8 @@ var Select = function (_React$Component) {
           placeholder
         );
 
-        if (value === undefined || value === '') {
+        // apply class if value is empty
+        if (value === '' || value === undefined && !defaultValue) {
           selectCls = 'mui--text-placeholder';
         }
       }
@@ -27309,7 +27313,7 @@ var Select = function (_React$Component) {
         }),
         _react2.default.createElement(
           'select',
-          {
+          babelHelpers.extends({}, valueArgs, {
             ref: function ref(el) {
               _this2.controlEl = el;
             },
@@ -27317,13 +27321,11 @@ var Select = function (_React$Component) {
             name: name,
             disabled: disabled,
             tabIndex: tabIndexInner,
-            value: this.state.value,
-            defaultValue: defaultValue,
             readOnly: readOnly,
             onChange: this.onInnerChangeCB,
             onMouseDown: this.onInnerMouseDownCB,
             required: this.props.required
-          },
+          }),
           placeholderElem,
           children
         ),
@@ -27498,7 +27500,7 @@ var Menu = function (_React$Component2) {
 
       // handle onChange
       if (pos !== this.state.origIndex) {
-        this.props.onChange(this.availOptionEls[pos].value);
+        this.props.onChange(this.availOptionEls[pos].index);
       }
 
       // close menu
@@ -28926,7 +28928,7 @@ describe('react/dropdown', function () {
     _assert2.default.equal(node.menuElRef, undefined);
 
     // click to render menu
-    return _testUtils2.default.Simulate.click(buttonEl, { button: 0 });
+    _testUtils2.default.Simulate.click(buttonEl, { button: 0 });
     var cls = 'mui-dropdown__menu mui--is-open';
     _assert2.default.equal(node.menuElRef.className, cls);
 
@@ -30228,6 +30230,24 @@ describe('react/select', function () {
     selectEl.value = '';
     _testUtils2.default.Simulate.change(selectEl);
     _assert2.default.equal(selectEl.className, 'mui--text-placeholder');
+  });
+
+  it('handles multiple options with same value', function () {
+    var instance = _testUtils2.default.renderIntoDocument(_react2.default.createElement(
+      _select2.default,
+      null,
+      _react2.default.createElement(_option2.default, { label: 'Apple', value: 'fruit' }),
+      _react2.default.createElement(_option2.default, { label: 'Banana', value: 'fruit' }),
+      _react2.default.createElement(_option2.default, { label: 'Ford', value: 'car' }),
+      _react2.default.createElement(_option2.default, { label: 'Toyota', value: 'car' })
+    ));
+
+    var selectEl = instance.controlEl;
+
+    selectEl.selectedIndex = 3;
+    _testUtils2.default.Simulate.change(selectEl);
+    _assert2.default.equal(selectEl.value, 'car');
+    _assert2.default.equal(selectEl.selectedIndex, 3);
   });
 }); /**
      * MUI test react select library
