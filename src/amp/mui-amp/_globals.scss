@@ -1,0 +1,7 @@
+/**
+ * MUI Globals
+ */
+
+@if $mui-include-globals == true {
+  @include normalizecss();
+}

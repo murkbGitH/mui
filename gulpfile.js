@@ -150,10 +150,14 @@ function buildCdn(dirname) {
     buildCdnAngular(dirname + '/angular'),
     buildCdnEmailInline(dirname + '/email'),
     buildCdnEmailStyletag(dirname + '/email'),
+    buildCdnAmp(dirname + '/amp'),
     buildCdnColors(dirname + '/extra'),
     buildCdnNoGlobals(dirname + '/extra'),
     buildCdnPx(dirname + '/extra'),
-    buildCdnRem(dirname + '/extra')
+    buildCdnRem(dirname + '/extra'),
+    buildCdnAmpNoGlobals(dirname + '/extra'),
+    buildCdnAmpPx(dirname + '/extra'),
+    buildCdnAmpRem(dirname + '/extra')
   );
 
   var t2 = gulp.parallel(
@@ -169,7 +173,7 @@ function buildCdn(dirname) {
 
 function buildCdnCss(dirname) {
   return makeTask('build-cdn-css: ' + dirname, function() {
-    return cssStream('mui.scss', dirname);
+    return cssStream('sass/mui.scss', dirname);
   });
 }
 
@@ -264,6 +268,13 @@ function buildCdnEmailStyletag(dirname) {
 }
 
 
+function buildCdnAmp(dirname) {
+  return makeTask('build-cdn-amp: ' + dirname, function() {
+    return cssStream('amp/mui-amp.scss', dirname);
+  });
+}
+
+
 function buildCdnWebcomponents(dirname, cssdir) {
   return makeTask('build-cdn-webcomponents: ' + dirname, function() {
     return browserifyStream(
@@ -296,21 +307,42 @@ function buildCdnColors(dirname) {
 
 function buildCdnNoGlobals(dirname) {
   return makeTask('build-cdn-noglobals: ' + dirname, function() {
-    return cssStream('mui-noglobals.scss', dirname);
+    return cssStream('sass/mui-noglobals.scss', dirname);
   });
 }
 
 
 function buildCdnPx(dirname) {
   return makeTask('build-cdn-px: ' + dirname, function() {
-    return cssStream('mui-px.scss', dirname);
+    return cssStream('sass/mui-px.scss', dirname);
   });
 }
 
 
 function buildCdnRem(dirname) {
   return makeTask('build-cdn-rem: ' + dirname, function() {
-    return cssStream('mui-rem.scss', dirname);
+    return cssStream('sass/mui-rem.scss', dirname);
+  });
+}
+
+
+function buildCdnAmpNoGlobals(dirname) {
+  return makeTask('build-cdn-amp-noglobals: ' + dirname, function() {
+    return cssStream('amp/mui-amp-noglobals.scss', dirname);
+  });
+}
+
+
+function buildCdnAmpPx(dirname) {
+  return makeTask('build-cdn-amp-px: ' + dirname, function() {
+    return cssStream('amp/mui-amp-px.scss', dirname);
+  });
+}
+
+
+function buildCdnAmpRem(dirname) {
+  return makeTask('build-cdn-amp-rem: ' + dirname, function() {
+    return cssStream('amp/mui-amp-rem.scss', dirname);
   });
 }
 
@@ -451,6 +483,7 @@ function buildNpm() {
     buildCdn('./packages/npm/dist'),
     buildNpmSass(),
     buildNpmEmail(),
+    buildNpmAmp(),
     buildNpmJs(),
     buildNpmReact(),
     buildNpmAngular()
@@ -476,6 +509,14 @@ function buildNpmEmail() {
   return makeTask('build-npm-email', function() {
     return gulp.src('./src/email/**/*')
       .pipe(plugins.copy('./packages/npm/lib/email', {prefix: 2}));
+  });
+}
+
+
+function buildNpmAmp() {
+  return makeTask('build-npm-amp', function() {
+    return gulp.src('./src/amp/**/*')
+      .pipe(plugins.copy('./packages/npm/lib/amp', {prefix: 2}));
   });
 }
 
@@ -548,13 +589,13 @@ function buildNpmBabelHelpersAngular() {
 // ----------------------------------------------------------------------------
 
 function cssStream(filename, dirname) {
-  var basename = filename.split('.')[0],
+  var basename = filename.split('/')[1].split('.')[0],
       rtlGlobalStr = 'html,body{direction:rtl;}';
   
   if (filename.indexOf('noglobals') >= 0) rtlGlobalStr = '';
 
   // base stream
-  var baseStream = gulp.src('./src/sass/' + filename)
+  var baseStream = gulp.src('./src/' + filename)
     .pipe(plugins.sass({outputStyle: 'expanded'}))
     .pipe(plugins.autoprefixer({
       browsers: ['last 2 versions'],
