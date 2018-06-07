@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- for example only -->   
-    <script src="../assets/vendor/react/16.0.0/react.js"></script>
-    <script src="../assets/vendor/react/16.0.0/react-dom.js"></script>
+    <script src="../assets/vendor/react/16.4.0/react.js"></script>
+    <script src="../assets/vendor/react/16.4.0/react-dom.js"></script>
     <script src="../assets/vendor/babel-standalone/6.26.0/babel.min.js"></script>
     <!-- end -->
 
@@ -45,11 +45,8 @@
           <strong>Placeholder</strong>
           <div id="example7"></div>
 
-          <strong>Placeholder</strong>
-          <div id="example8"></div>
-
           <strong>Multiple options with same value</strong>
-          <div id="example9"></div>
+          <div id="example8"></div>
 
           <button class="mui-btn mui-btn--raised">submit</button>
         </form>
@@ -232,38 +229,6 @@
 
       // Example 7
       class Example7 extends React.Component {
-        state = {
-          numOptions: 3
-        }
-        
-        onClick() {
-          this.setState({numOptions: this.state.numOptions + 1});
-        }
-
-        render() {
-          let optionEls = [];
-          
-          for (let i=0; i < this.state.numOptions; i++) {
-            optionEls.push(
-              <Option label={"Option " + i} value={i} />
-            )
-          }
-          
-          return (
-            <div>
-              <Select label="Label" required>
-                <Option label="Placeholder" value="" selected disabled hidden />
-                {optionEls}
-              </Select>
-              <a onClick={this.onClick.bind(this)}>Add option</a>
-            </div>
-          );
-        }
-      }
-
-
-      // Example 8
-      class Example8 extends React.Component {
         render() {
           return (
             <Select label="Label" placeholder="Placeholder">
@@ -276,8 +241,8 @@
       }
 
 
-      // Example 9
-      class Example9 extends React.Component {
+      // Example 8
+      class Example8 extends React.Component {
         render() {
           return (
             <Select label="Label">
@@ -300,7 +265,6 @@
       ReactDOM.render(<Example6 />, document.getElementById('example6'));
       ReactDOM.render(<Example7 />, document.getElementById('example7'));
       ReactDOM.render(<Example8 />, document.getElementById('example8'));
-      ReactDOM.render(<Example9 />, document.getElementById('example9'));
     </script>
   </body>
 </html>
