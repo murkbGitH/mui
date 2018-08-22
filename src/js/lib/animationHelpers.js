@@ -70,8 +70,10 @@ function loadCss() {
     ['[data-mui-toggle="tab"]', 'mui-tab-inserted'],
     ['.mui-textfield > input', 'mui-textfield-inserted'],
     ['.mui-textfield > textarea', 'mui-textfield-inserted'],
-    ['.mui-textfield > input:-webkit-autofill', 'mui-textfield-autofill'],
-    ['.mui-textfield > textarea:-webkit-autofill', 'mui-textfield-autofill'],
+    ['.mui-textfield > input:-webkit-autofill', 'mui-textfield-autofill-start'],
+    ['.mui-textfield > textarea:-webkit-autofill', 'mui-textfield-autofill-start'],
+    ['.mui-textfield > input:not(:-webkit-autofill)', 'mui-textfield-autofill-cancel'],
+    ['.mui-textfield > textarea:not(:-webkit-autofill)', 'mui-textfield-autofill-cancel'],
     ['.mui-select > select', 'mui-select-inserted'],
     ['.mui-select > select ~ .mui-event-trigger', 'mui-node-inserted'],
     ['.mui-select > select:disabled ~ .mui-event-trigger', 'mui-node-disabled']
